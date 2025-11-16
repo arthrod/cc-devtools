@@ -1,0 +1,206 @@
+memories:
+  - id: 001-architecture-decisions
+    summary: Modular MCP Server Architecture Decision
+    details: |
+      We decided to use a modular MCP server architecture where each tool (kanban, memory, planner, source-code-mapper, clipboard, workflow) runs as an independent MCP server process. This architectural decision was made after evaluating monolithic vs modular approaches.
+
+      ## Key Benefits
+      - **Independent lifecycle management**: Each tool can be started, stopped, or restarted without affecting others
+      - **Reduced memory footprint**: Users only run the MCP servers for features they've enabled
+      - **Easier to test and maintain**: Each server has isolated test suites and dependencies
+      - **Clear separation of concerns**: Business logic is cleanly separated by domain
+      - **Selective feature enablement**: Users can disable features they don't need via .mcp.json
+
+      ## Trade-offs Considered
+      - Monolithic approach: Simpler deployment but heavier resource usage
+      - Shared services approach: Some code reuse but increased coupling
+      - Microservices approach: Maximum isolation but more complex orchestration
+
+      ## Implementation Details
+      - Each MCP server runs in its own Node.js process
+      - Servers communicate with Claude Code via stdio (Model Context Protocol)
+      - Shared utilities are in `src/shared/` for code reuse without coupling
+      - Configuration is managed per-server in .mcp.json
+
+      ## Future Considerations
+      - May add inter-server communication for advanced workflows
+      - Could support remote MCP servers for team collaboration
+      - Potential for server clustering for high-load scenarios
+    tags:
+      - architecture
+      - mcp
+      - design-decision
+      - modularity
+      - scalability
+    created_at: 1696156800000
+  - id: 002-storage-format
+    summary: Hybrid Storage Strategy (YAML + MessagePack)
+    details: |
+      We chose a hybrid storage approach using YAML for human-readable data and MessagePack for binary/cache data. This decision balances user experience with performance requirements.
+
+      ## Storage Format Breakdown
+
+      ### YAML Storage (Human-Readable)
+      Used for data that users may want to inspect or manually edit:
+      - **Kanban**: cc-devtools/kanban.yaml (stories, subtasks, configuration)
+      - **Memory**: cc-devtools/memory.yaml (array of memories)
+      - **Planner**: cc-devtools/plans/*.yaml (one file per plan)
+      - **Workflow Config**: cc-devtools/workflow/*.yaml (decision trees, reviewer config)
+      - **Per-File Runner**: cc-devtools/per-file-runner.yaml and per-file-runner-state.yaml
+
+      ### MessagePack Storage (Binary/Efficient)
+      Used for cache data and frequently updated binary content:
+      - **Source Code Index**: cc-devtools/.cache/source-code-index.msgpack
+      - **Embeddings**: cc-devtools/.cache/*-embeddings.msgpack (memory, planner, kanban)
+      - **Web Tokens**: cc-devtools/.cache/web-tokens.msgpack
+
+      ## Trade-offs Analyzed
+
+      | Format | Pros | Cons | Use Case |
+      |--------|------|------|----------|
+      | YAML | Human-readable, easy to edit, git-friendly | Slower parsing, larger file size | User-facing data |
+      | JSON | Universal, fast parsing | Less readable, no comments | API responses |
+      | MessagePack | Compact, fast, efficient | Binary (not readable) | Cache/binary data |
+      | SQLite | Queryable, ACID compliance | Binary, harder to inspect | Not chosen |
+
+      ## Why This Approach Works
+
+      1. **Developer Experience**: Users can read and understand their kanban boards, memories, and plans
+      2. **Git Integration**: YAML diffs well in version control
+      3. **Performance**: Binary cache data loads quickly without parsing overhead
+      4. **Flexibility**: Users can backup/restore by copying directories
+      5. **Debugging**: Easy to inspect YAML files when troubleshooting
+
+      ## Future Enhancements
+      - Consider optional SQLite backend for very large datasets
+      - Add data migration utilities for format changes
+      - Implement automatic backup/versioning system
+    tags:
+      - storage
+      - yaml
+      - messagepack
+      - data-format
+      - design-decision
+      - performance
+    created_at: 1696502400000
+  - id: 003-semantic-search
+    summary: Hybrid Search with Local Embeddings
+    details: |
+      Implemented hybrid search combining keyword matching with semantic embeddings using @xenova/transformers for local embedding generation. This enables intelligent search without API dependencies or costs.
+
+      ## Search Algorithm
+
+      ### Step 1: Keyword Pre-filtering
+      - Extract keywords from search query
+      - Filter items containing exact keyword matches
+      - Boosts precision for specific term searches
+
+      ### Step 2: Embedding Generation
+      - Generate 384-dimensional vector embedding for query
+      - Use all-MiniLM-L6-v2 model (optimized for semantic similarity)
+      - Cached embeddings reused across searches
+
+      ### Step 3: Similarity Calculation
+      - Calculate cosine similarity between query and item embeddings
+      - Score range: -1.0 to 1.0 (higher = more similar)
+      - Default threshold: 0.3 for relevance filtering
+
+      ### Step 4: Ranking and Filtering
+      - Sort results by similarity score (descending)
+      - Apply configurable score threshold
+      - Limit results to top N matches
+
+      ## Technical Details
+
+      - **Model**: all-MiniLM-L6-v2
+      - **Embedding Dimensions**: 384
+      - **Similarity Metric**: Cosine similarity
+      - **Default Threshold**: 0.3
+      - **Runtime**: Local (no API calls)
+      - **Cache**: MessagePack for fast embedding storage/retrieval
+
+      ## Performance Characteristics
+
+      - First search: ~500ms (model loading + embedding generation)
+      - Subsequent searches: ~50-100ms (cached model + embeddings)
+      - Memory usage: ~100MB for model in memory
+      - Works completely offline
+    tags:
+      - search
+      - embeddings
+      - semantic-search
+      - nlp
+      - transformers
+      - performance
+    created_at: 1697174100000
+  - id: 004-web-authentication
+    summary: Token-Based Web Authentication with QR Code Support
+    details: |
+      Web application uses token-based authentication with QR code support for easy mobile access. Designed for local development with persistent tokens across server restarts.
+
+      ## Authentication Flow
+
+      ### Server Startup
+      1. Check for existing tokens in `cc-devtools/.cache/web-tokens.msgpack`
+      2. If none exist, generate new UUID v4 token (128-bit entropy)
+      3. Store token in MessagePack cache
+      4. Display QR code in terminal for mobile scanning
+      5. Print direct URL with embedded token for convenience
+
+      ### Client Authentication
+      1. User scans QR code or visits URL
+      2. Web UI prompts for token (if not in URL)
+      3. Token sent to server via POST /api/auth/login
+      4. Server validates against stored tokens
+      5. On success, HTTP-only cookie issued with session token
+      6. Subsequent requests authenticated via cookie
+
+      ### Token Invalidation
+      - Use `--invalidate-tokens` flag to clear all tokens
+      - Forces re-authentication for all users
+      - Useful when tokens may have been compromised
+
+      ## Security Considerations
+
+      ### Token Properties
+      - **Format**: UUID v4 (128-bit random entropy)
+      - **Storage**: MessagePack binary format in .cache (gitignored)
+      - **Expiry**: Persistent (no expiration unless invalidated)
+      - **Transport**: HTTPS recommended for production use
+
+      ### Threat Model
+      - **Local development**: Designed for localhost access
+      - **LAN access**: Secure enough for trusted network environments
+      - **Production**: NOT recommended without additional security layers
+
+      ### Security Features
+      - Tokens stored in gitignored cache directory
+      - HTTP-only cookies prevent XSS token theft
+      - Manual invalidation available via CLI flag
+      - Token regeneration on invalidation
+
+      ### Future Enhancements
+      - Add token expiration (configurable TTL)
+      - Support multiple concurrent users with unique tokens
+      - Implement rate limiting on auth endpoints
+      - Add IP whitelisting for additional security
+      - Support for OAuth2/OIDC for production deployments
+
+      ## Mobile Access
+
+      The QR code feature makes mobile access seamless:
+      1. Start web server on desktop
+      2. Scan QR code with mobile device
+      3. Instantly authenticated and connected
+      4. Use remote console from phone/tablet
+      5. Access kanban board and editor on mobile
+
+      Perfect for checking project status or running quick commands while away from desk.
+    tags:
+      - security
+      - authentication
+      - web
+      - qr-code
+      - tokens
+      - mobile
+    created_at: 1697810400000

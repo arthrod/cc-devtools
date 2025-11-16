@@ -1,0 +1,24 @@
+# Workflow Configuration
+version: 1
+
+# Decision tree
+decisionTree:
+  # Use built-in default tree
+  source: default
+
+  # Or override with custom tree file
+  # source: file
+  # path: ./custom-decision-tree.yaml
+
+# Logging
+logging:
+  enabled: false  # Enable for debugging workflow issues
+  file: workflow.log
+  level: info  # info | debug | error
+
+# Integration
+kanban:
+  # How to invoke kanban (internal or cli)
+  # internal: use direct imports (faster, recommended)
+  # cli: use npx cc-devtools kanban commands (slower, for compatibility)
+  mode: internal

@@ -1,0 +1,681 @@
+states:
+  - id: example-config
+    currentFiles:
+      - file: src/cli/commands/add-feature/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/add-review.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/append-story-field.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/append-subtask-field.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/config.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/create-stories.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/create-subtasks.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/delete-story.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/delete-subtask.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/get-review.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/get-round-reviewers.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/get.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/init.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/list.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/move.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/next.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/stats.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/update-story.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/update-subtask.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/kanban/validate.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/per-file-runner/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/remove-feature/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/scm/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/scm/stats.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/setup/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/status/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/suggest-output-style/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/web/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/workflow/check.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/workflow/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/commands/workflow/review.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/core/format-specs.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/core/parser.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/core/response.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/core/suggestions.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/core/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/utils/fs-utils.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/utils/gitignore.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/utils/mcp-config.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/utils/prompts.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/utils/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/cli/utils/validation.ts
+        last_hash: null
+        last_state: new
+      - file: src/clipboard/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/clipboard/tools/write.ts
+        last_hash: null
+        last_state: new
+      - file: src/clipboard/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/core/storage.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/formatters.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/query.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/recommendation.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/review-storage.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/storage.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/services/validation.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/tools/get-work-item.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/tools/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/tools/update-work-item.ts
+        last_hash: null
+        last_state: new
+      - file: src/kanban/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/memory/core/storage.ts
+        last_hash: null
+        last_state: new
+      - file: src/memory/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/memory/services/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/memory/tools/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/memory/tools/store.ts
+        last_hash: null
+        last_state: new
+      - file: src/memory/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/core/config.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/core/executor.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/core/file-matcher.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/core/hash.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/core/logger.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/core/state.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/services/runner.ts
+        last_hash: null
+        last_state: new
+      - file: src/per-file-runner/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/core/embeddings.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/core/storage.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/services/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/tools/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/tools/store.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/tools/update.ts
+        last_hash: null
+        last_state: new
+      - file: src/planner/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/embeddings.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/errors.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/file-lock.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/hybrid-search.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/mcp-server-utils.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/types/common.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/types/errors.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/types/locks.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/types/mcp.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/types/responses.ts
+        last_hash: null
+        last_state: new
+      - file: src/shared/types/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/core/embeddings.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/core/storage.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/imports.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/languages.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parser.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/assembly.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/bash.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/c-cpp.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/clojure.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/cobol.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/csharp.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/dart.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/elixir.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/fortran.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/fsharp.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/generic.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/go.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/groovy.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/haskell.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/java.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/javascript-typescript.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/julia.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/kotlin.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/lisp.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/lua.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/matlab.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/objective-c.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/ocaml.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/perl.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/php.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/python.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/r.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/ruby.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/rust.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/scala.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/swift.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/parsers/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/scanner.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/search.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/services/watcher.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/tools/get-file-info.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/tools/query-imports.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/tools/search-code.ts
+        last_hash: null
+        last_state: new
+      - file: src/source-code-mapper/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/gestures/GestureHandler.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/gestures/gestureConfig.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/gestures/useGestures.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/keyboard/keyboardHandler.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/keyboard/useKeyboard.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/terminal/terminalThemes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/websocket/ConnectionManager.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/websocket/TerminalSSE.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/websocket/TerminalWebSocket.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/websocket/VibeBufferDecoder.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/console/websocket/useTerminalWebSocket.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/components/shared/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useAuth.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useConsoleSessions.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useCopyToClipboard.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useDebounce.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useFiles.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useGitStatus.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useIsMobile.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useKeyboard.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useMemories.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useOnlineStatus.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useSSE.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useSessionDirectory.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useStories.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/hooks/useToast.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/api.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/console.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/files.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/git.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/kanban.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/memory.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/plans.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/services/terminalBufferService.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/stores/appStore.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/stores/editorStore.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/stores/kanbanStore.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/stores/terminalActivityStore.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/stores/uiStore.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/types/keyboard.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/types/toast.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/types/vibetunnel.d.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/utils/column-utils.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/utils/consolePersistence.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/utils/positioning.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/client/utils/readiness-utils.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/config/config.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/middleware/auth.middleware.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/middleware/ipWhitelist.middleware.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/middleware/rateLimit.middleware.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/console.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/files.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/git.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/kanban.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/memory.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/plans.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/routes/project.routes.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/services/console.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/services/git.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/services/tokenStore.service.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/sse/fileWatcher.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/utils/logger.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/server/utils/qrCode.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/shared/types.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/shared/types/console.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/shared/types/git.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/shared/types/memory.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/shared/types/plans.ts
+        last_hash: null
+        last_state: new
+      - file: src/web/vite.config.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/index.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/lib/config.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/lib/decision-tree.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/lib/engine.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/lib/logger.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/lib/state-reader.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/review/config.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/review/orchestrator.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/review/post-processor.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/review/prompt-generator.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/review/reviewer-runner.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/types/review.ts
+        last_hash: null
+        last_state: new
+      - file: src/workflow/types/workflow.ts
+        last_hash: null
+        last_state: new

@@ -1,0 +1,316 @@
+config:
+  statuses:
+    story:
+      - todo
+      - in_progress
+      - in_review
+      - done
+    subtask:
+      - todo
+      - in_progress
+      - done
+  business_values:
+    - XS
+    - S
+    - M
+    - L
+    - XL
+  phases:
+    - MVP
+    - BETA
+    - V1
+    - POSTRELEASE
+  default_status:
+    story: todo
+    subtask: todo
+  workflow_rules:
+    max_stories_in_progress: 1
+    subtasks_require_story_in_progress: true
+    all_subtasks_completed_before_review: true
+stories:
+  - id: MVP-001
+    title: User Authentication System
+    status: in_progress
+    phase: MVP
+    business_value: XL
+    effort_estimation_hours: 40
+    labels:
+      - security
+      - backend
+      - critical
+    description: Implement comprehensive user authentication with JWT tokens and multi-factor authentication
+    details: |
+      Build a secure authentication system supporting:
+      - User registration with email verification
+      - Login with JWT access tokens (15min) and refresh tokens (7 days)
+      - Password hashing with bcrypt (cost factor 12)
+      - Multi-factor authentication (TOTP-based)
+      - Rate limiting (5 attempts per 15 minutes)
+      - Password reset flow via email
+    planning_notes: |
+      Security requirements from InfoSec team:
+      - All passwords must meet complexity requirements (12+ chars, mixed case, numbers, special)
+      - MFA mandatory for admin accounts
+      - Audit logging for all authentication events
+      - Token rotation on refresh
+    acceptance_criteria:
+      - User can register with valid email and strong password
+      - User can login and receive JWT tokens
+      - Tokens expire correctly and can be refreshed
+      - MFA enrollment and verification works
+      - Rate limiting prevents brute force attacks
+      - All auth events are logged with IP and user agent
+    relevant_documentation:
+      - https://example.com/docs/security-standards
+      - https://example.com/wiki/authentication-architecture
+    implementation_notes: |
+      Current progress:
+      - Database schema created with migrations
+      - User registration endpoint complete with email validation
+      - Password hashing implemented with bcrypt
+      - Started JWT generation logic in login endpoint
+
+      Next steps:
+      - Complete login endpoint with rate limiting
+      - Implement JWT verification middleware
+      - Add token refresh mechanism
+    dependent_upon: []
+    completion_timestamp: null
+    updated_at: '2025-11-16T14:00:00.000Z'
+    subtasks:
+      - id: MVP-001-1
+        title: Create database schema and migrations
+        status: done
+        description: Design and implement user authentication tables
+        details: |
+          Tables needed:
+          - users (id, email, password_hash, mfa_secret, mfa_enabled, created_at, updated_at)
+          - refresh_tokens (id, user_id, token_hash, expires_at, created_at)
+          - audit_logs (id, user_id, action, ip_address, user_agent, created_at)
+        effort_estimation_hours: 4
+        planning_notes: Use Knex.js for migrations, support rollback
+        acceptance_criteria:
+          - All tables created with proper indexes
+          - Foreign keys and constraints defined
+          - Migration can run and rollback cleanly
+        relevant_documentation:
+          - https://example.com/docs/database-schema
+        implementation_notes: Completed. All indexes added for performance.
+        dependent_upon: []
+        completion_timestamp: '2025-11-16T10:00:00.000Z'
+        updated_at: '2025-11-16T10:00:00.000Z'
+      - id: MVP-001-2
+        title: Implement user registration endpoint
+        status: done
+        description: POST /api/auth/register endpoint with validation
+        details: |
+          Endpoint requirements:
+          - Validate email format and uniqueness
+          - Enforce password complexity rules
+          - Hash password with bcrypt
+          - Create user record
+          - Send verification email
+          - Return success/error response
+        effort_estimation_hours: 6
+        planning_notes: Use joi for validation, nodemailer for emails
+        acceptance_criteria:
+          - Rejects invalid email formats
+          - Prevents duplicate email registration
+          - Enforces password complexity
+          - Sends verification email
+          - Returns appropriate error codes
+        relevant_documentation:
+          - https://example.com/api-docs/auth
+        implementation_notes: Complete with comprehensive error handling
+        dependent_upon:
+          - MVP-001-1
+        completion_timestamp: '2025-11-16T11:30:00.000Z'
+        updated_at: '2025-11-16T11:30:00.000Z'
+      - id: MVP-001-3
+        title: Add password hashing with bcrypt
+        status: in_progress
+        description: Implement secure password storage
+        details: |
+          Requirements:
+          - Use bcrypt with cost factor 12
+          - Hash passwords on registration
+          - Verify passwords on login
+          - Never store plaintext passwords
+        effort_estimation_hours: 3
+        planning_notes: Create utility module for password operations
+        acceptance_criteria:
+          - Passwords hashed before storage
+          - Hash verification works correctly
+          - Cost factor is 12
+          - No plaintext passwords in database
+        implementation_notes: |
+          In progress. Hash function complete, working on verification.
+          Need to add timing-safe comparison.
+        dependent_upon:
+          - MVP-001-2
+        completion_timestamp: null
+        updated_at: '2025-11-16T13:00:00.000Z'
+      - id: MVP-001-4
+        title: Create login endpoint with rate limiting
+        status: todo
+        description: POST /api/auth/login with brute force protection
+        details: |
+          Endpoint features:
+          - Validate credentials
+          - Generate JWT access token (15min expiry)
+          - Generate refresh token (7 day expiry)
+          - Rate limit: 5 attempts per 15 minutes per IP
+          - Log all login attempts
+        effort_estimation_hours: 8
+        planning_notes: Use express-rate-limit middleware
+        acceptance_criteria:
+          - Valid credentials return tokens
+          - Invalid credentials return 401
+          - Rate limiting blocks after 5 attempts
+          - Login events logged to audit table
+        relevant_documentation:
+          - https://example.com/docs/rate-limiting
+        dependent_upon:
+          - MVP-001-3
+        completion_timestamp: null
+        updated_at: '2025-11-16T09:00:00.000Z'
+  - id: MVP-002
+    title: Database Schema Design
+    status: todo
+    phase: MVP
+    business_value: L
+    effort_estimation_hours: 12
+    labels:
+      - database
+      - backend
+    description: Design initial schema for users, sessions, and audit logs
+    planning_notes: Consider using migrations for version control
+    implementation_notes: Waiting for auth system to complete before finalizing schema
+    updated_at: '2025-11-15T16:00:00.000Z'
+  - id: BETA-001
+    title: Add Real-time Notifications
+    status: todo
+    phase: BETA
+    business_value: M
+    effort_estimation_hours: 24
+    labels:
+      - websocket
+      - real-time
+      - backend
+      - frontend
+    description: WebSocket-based notifications for user actions
+    details: |
+      Implement real-time notification system using WebSockets.
+      Support for:
+      - User mentions
+      - System alerts
+      - Data updates
+    planning_notes: Need to decide between Socket.io vs native WebSockets
+    acceptance_criteria:
+      - Notifications delivered in real-time
+      - Automatic reconnection on disconnect
+      - Offline queue for missed notifications
+    implementation_notes: Blocked until infrastructure team provisions WebSocket server
+    dependent_upon:
+      - MVP-001
+    updated_at: '2025-11-14T12:00:00.000Z'
+  - id: BETA-002
+    title: Implement Caching Layer
+    status: in_review
+    phase: BETA
+    business_value: S
+    effort_estimation_hours: 16
+    labels:
+      - performance
+      - redis
+      - backend
+    description: Redis-based caching for frequently accessed data
+    details: |
+      Add caching layer to reduce database load:
+      - User profiles (1 hour TTL)
+      - Static content (24 hour TTL)
+      - API responses (5 minute TTL)
+    planning_notes: All subtasks completed, pending code review
+    acceptance_criteria:
+      - Cache hit rate above 80%
+      - Response times improved by 50%
+      - Automatic cache invalidation on updates
+    relevant_documentation:
+      - https://example.com/docs/caching-strategy
+    implementation_notes: All functionality complete. Ready for review.
+    completion_timestamp: null
+    updated_at: '2025-11-16T15:00:00.000Z'
+    subtasks:
+      - id: BETA-002-1
+        title: Setup Redis connection pool
+        status: done
+        description: Configure Redis client with connection pooling
+        effort_estimation_hours: 3
+        acceptance_criteria:
+          - Redis client connected
+          - Pool size configured
+          - Health check working
+        completion_timestamp: '2025-11-15T10:00:00.000Z'
+        updated_at: '2025-11-15T10:00:00.000Z'
+      - id: BETA-002-2
+        title: Implement cache middleware
+        status: done
+        description: Express middleware for automatic caching
+        effort_estimation_hours: 6
+        acceptance_criteria:
+          - GET requests cached automatically
+          - Cache keys generated from URL
+          - TTL configurable per route
+        completion_timestamp: '2025-11-15T14:00:00.000Z'
+        updated_at: '2025-11-15T14:00:00.000Z'
+      - id: BETA-002-3
+        title: Add cache invalidation logic
+        status: done
+        description: Invalidate cache on data updates
+        effort_estimation_hours: 4
+        acceptance_criteria:
+          - Cache cleared on POST/PUT/DELETE
+          - Pattern-based invalidation working
+          - Manual clear endpoint available
+        completion_timestamp: '2025-11-16T09:00:00.000Z'
+        updated_at: '2025-11-16T09:00:00.000Z'
+  - id: V1-001
+    title: Performance Optimization
+    status: done
+    phase: V1
+    business_value: M
+    effort_estimation_hours: 20
+    labels:
+      - performance
+      - optimization
+      - database
+    description: Optimize database queries and add indexing
+    details: |
+      Performance improvements completed:
+      - Added composite indexes on frequently queried columns
+      - Optimized N+1 queries with eager loading
+      - Implemented query result caching
+      - Reduced average response time by 40%
+    planning_notes: Used query profiling to identify bottlenecks
+    acceptance_criteria:
+      - All endpoints respond under 200ms
+      - No N+1 query issues
+      - Database CPU usage reduced
+    implementation_notes: Completed ahead of schedule. All acceptance criteria met.
+    completion_timestamp: '2025-11-10T18:00:00.000Z'
+    updated_at: '2025-11-10T18:00:00.000Z'
+  - id: POSTRELEASE-001
+    title: Add Analytics Dashboard
+    status: todo
+    phase: POSTRELEASE
+    business_value: S
+    effort_estimation_hours: 32
+    labels:
+      - analytics
+      - frontend
+      - charts
+    description: Create dashboard for tracking user metrics and system health
+    planning_notes: Consider using Chart.js or D3.js for visualizations
+    dependent_upon:
+      - V1-001
+    updated_at: '2025-11-12T10:00:00.000Z'

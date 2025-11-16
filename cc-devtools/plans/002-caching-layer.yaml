@@ -1,0 +1,101 @@
+id: 002-caching-layer
+status: on_hold
+summary: Add Redis-based caching layer for frequently accessed data with cache invalidation strategies
+goal: |
+  Implement a comprehensive caching system to reduce database load and improve response times. Target 80% cache hit rate for read-heavy endpoints. Support automatic cache invalidation on data updates.
+decisions: |
+  ## Caching Strategy
+  - **Cache-aside pattern**: Application manages cache explicitly
+  - **TTL Strategy**: Variable TTLs based on data volatility
+    - User profiles: 1 hour
+    - Static content: 24 hours
+    - API responses: 5 minutes
+  - **Invalidation**: Event-based invalidation on writes
+
+  ## Redis Configuration
+  - **Deployment**: Single Redis instance for MVP (cluster for production)
+  - **Persistence**: RDB snapshots every 5 minutes + AOF for durability
+  - **Memory**: 512MB limit with LRU eviction
+  - **Connection Pool**: Max 50 connections
+
+  ## Cache Key Design
+  - Namespaced keys: `app:entity:id` (e.g., `app:user:123`)
+  - Version prefixes for schema changes: `v1:user:123`
+  - Hash tags for Redis cluster compatibility: `{user:123}:profile`
+
+  ## What to Cache
+  - ✅ User profiles and permissions
+  - ✅ Frequently accessed config data
+  - ✅ Expensive database queries
+  - ✅ API response data
+  - ❌ Real-time data (stock prices, notifications)
+  - ❌ User session data (already in Redis)
+implementation_plan: |
+  ## Phase 1: Infrastructure Setup
+  1. Install and configure Redis
+  2. Set up connection pool with ioredis
+  3. Create cache wrapper utility
+  4. Add health check endpoint for Redis
+
+  ## Phase 2: Cache Middleware
+  5. Implement cache-aside middleware
+  6. Add response caching for GET endpoints
+  7. Create cache key generation utility
+  8. Add cache hit/miss metrics
+
+  ## Phase 3: Invalidation System
+  9. Design invalidation event system
+  10. Implement cache invalidation on writes
+  11. Add bulk invalidation support
+  12. Create manual cache clear endpoint
+
+  ## Phase 4: Monitoring and Optimization
+  13. Add cache hit/miss rate monitoring
+  14. Implement cache warming for critical data
+  15. Optimize TTL values based on metrics
+  16. Document caching patterns for team
+tasks:
+  - summary: Install and configure Redis
+    status: completed
+  - summary: Set up connection pool with ioredis
+    status: completed
+  - summary: Create cache wrapper utility
+    details: Supports get/set/delete operations with connection pooling
+    status: completed
+  - summary: Add health check endpoint for Redis
+    status: completed
+  - summary: Implement cache-aside middleware
+    status: completed
+  - summary: Add response caching for GET endpoints
+    details: Next task when resuming this plan
+    status: pending
+notes: |
+  ## Session Paused - 2023-11-15
+
+  Pausing work on caching layer to focus on authentication system (higher priority for MVP launch). Will resume after authentication is complete.
+
+  ### Work Completed So Far
+  - Redis infrastructure fully set up and tested
+  - Connection pooling working efficiently (tested with 1000 concurrent connections)
+  - Cache wrapper utility supports get/set/delete operations
+  - Health check endpoint reporting Redis status correctly
+
+  ### What's Left
+  - Need to implement response caching middleware for GET endpoints
+  - Design and implement the invalidation event system
+  - Add monitoring/metrics for cache performance
+  - Write comprehensive tests
+
+  ### Context for Resume
+  When resuming:
+  1. Start with response caching middleware (task-006)
+  2. Reference the cache wrapper in `src/utils/cache.ts`
+  3. Look at Express middleware patterns in existing codebase
+  4. Consider using cache-manager package for higher-level abstraction
+
+  ### Technical Debt Notes
+  - Current cache keys don't include version prefix - add before production
+  - Need to add Redis cluster support for horizontal scaling
+  - Consider adding cache compression for large values
+created_at: 1699459200000
+updated_at: 1699891200000

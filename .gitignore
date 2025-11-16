@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+*.tgz
+
+# Cache files (user data in cc-devtools/ is meant to be committed)
+cc-devtools/.cache/
+
+.playwright-mcp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+*.sublime-project
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+.cache/
+
+# Local development
+.env
+.env.local
+.env.*.local

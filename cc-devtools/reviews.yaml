@@ -1,0 +1,11 @@
+reviews:
+  - storyId: MVP-001
+    round: 1
+    reviewer: codex
+    review: Review 2
+    timestamp: '2025-10-20T17:26:16.798Z'
+  - storyId: MVP-001
+    round: 2
+    reviewer: claude
+    review: Review 3
+    timestamp: '2025-10-20T17:26:16.799Z'

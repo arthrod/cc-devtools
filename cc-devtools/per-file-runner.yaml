@@ -1,0 +1,19 @@
+configs:
+  - id: example-config
+    name: Example Per-File Runner Config
+    prompt: |
+      Process the file {filename}.
+      Add a comment at the top explaining what this file does.
+    priority: 1
+    glob:
+      include:
+        - "src/**/*.ts"
+      exclude:
+        - "node_modules/**"
+        - "dist/**"
+        - "**/*.test.ts"
+    command: echo
+    args:
+      - "Would process:"
+      - "___PROMPT___"
+    timeout: 300000

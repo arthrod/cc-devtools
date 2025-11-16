@@ -1,0 +1,72 @@
+# Reviewer Configuration
+version: 1
+
+# Global settings
+defaults:
+  timeout: 900000  # 15 minutes per reviewer
+  metadataDir: .tmp
+  promptTemplate: default
+
+# Reviewer definitions
+# Each reviewer is a command-line tool that accepts a prompt and writes results to a file
+# You can enable/disable reviewers and customize their command-line arguments
+reviewers:
+  - name: claude
+    enabled: true
+    command: ~/.claude/local/claude  # Update this path if your claude installation is elsewhere
+    args:
+      - "-p"
+      - "___PROMPT___"  # Placeholder replaced with review prompt
+      - "--allowedTools"
+      - "Bash,Read,Glob,Grep,Write,WriteFile"
+      - "--allowedTools"
+      - "mcp__cc-devtools-kanban__*,mcp__cc-devtools-memory__*"
+    timeout: 900000
+
+  - name: codex
+    enabled: false  # Enable if you have codex installed
+    command: codex
+    args:
+      - "exec"
+      - "___PROMPT___"
+      - "--full-auto"
+    timeout: 900000
+
+  - name: qwen
+    enabled: false  # Enable if you have qwen CLI installed
+    command: qwen
+    args:
+      - "-p"
+      - "___PROMPT___"
+      - "--approval-mode"
+      - "yolo"
+      - "--allowed-tools"
+      - "read_file,search_file_content,glob,run_shell_command,write_file"
+      - "--allowed-mcp-server-names"
+      - "cc-devtools-kanban,cc-devtools-memory"
+    timeout: 900000
+
+  - name: gemini
+    enabled: false  # Enable if you have gemini CLI installed
+    command: gemini
+    args:
+      - "___PROMPT___"
+      - "--yolo"
+      - "--allowed-mcp-server-names"
+      - "cc-devtools-kanban,cc-devtools-memory"
+    timeout: 900000
+
+# Review settings
+review:
+  # Auto-generate prompts based on story context
+  autoGenerate: true
+
+  # Cleanup metadata after successful review
+  autoCleanup: false
+
+  # Storage integration
+  storage:
+    # Store reviews to kanban
+    enabled: true
+    # Store false positives to memory
+    storeFalsePositives: true

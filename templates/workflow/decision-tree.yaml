@@ -1,0 +1,291 @@
+# Workflow State Decision Tree
+# This file is parsed by the workflow engine to determine the current workflow state
+# and return appropriate actions to the LLM.
+
+# State variables available:
+# Git State:
+#   - git_branch: string (e.g., "main", "feature/MVP-001-...")
+#   - git_clean: boolean (true if no uncommitted changes)
+#   - git_last_commit_is_finalized: boolean (true if last commit message contains "Finalized")
+#
+# Kanban State (from kanban service):
+#   - total_stories: number
+#   - stories_in_progress: array of story objects (or empty array)
+#   - stories_in_review: array of story objects (or empty array)
+#   - stories_done: array of story objects (or empty array)
+#   - stories_todo: array of story objects sorted by phase priority (config order) then story number (or empty array)
+#   - current_story: object (first in_progress or in_review story) or null
+#   - current_story_id: string or null
+#   - current_story_status: string or null
+#   - current_story_subtasks: array or null
+#   - subtasks_in_progress: number (count)
+#   - subtasks_todo: number (count)
+#   - subtasks_done: number (count)
+#   - current_subtask: object (first in_progress subtask) or null
+#   - current_subtask_id: string or null
+#   - next_subtask: object (first todo subtask) or null
+#   - next_subtask_id: string or null
+#   - next_subtask_title: string or null
+#   - next_story: object (first todo story - sorted by phase priority) or null
+#   - next_story_id: string or null
+#   - next_story_title: string or null
+#   - current_branch_story_id: string or null (story ID extracted from current branch name)
+#   - on_feature_branch_for_done_story: boolean (checks if current branch matches ANY done story)
+#   - first_done_story_id: string or null (first done story by ID, for steps 6-8 when on main)
+#   - done_story_feature_branch_exists: boolean (checks if ANY done story has a feature branch)
+#   - done_story_feature_branch_name: string or null (name of first done story's feature branch)
+#   - done_story_feature_branch_merged: boolean (checks if that branch is merged)
+#   - feature_branch_exists_for_current_story: boolean (for in_progress stories)
+
+# Decision tree structure:
+# Each decision has:
+#   - condition: JavaScript expression evaluated against state variables
+#   - result: state name (terminal) or next_decision (continue tree)
+#   - action: returned when terminal state reached
+
+decisions:
+  # Decision 1: Check if kanban is empty
+  - name: check_kanban_empty
+    condition: "total_stories === 0"
+    if_true:
+      state: EMPTY_KANBAN
+      action_type: suggest
+      action: "Suggest user run `/kanban-add-stories` to add work items"
+    if_false: check_story_done
+
+  # Decision 2: Check if story is DONE
+  - name: check_story_done
+    condition: "stories_done.length > 0"
+    if_true: check_on_feature_for_done
+    if_false: check_story_in_review
+
+  # Decision 3: Check if on feature branch for ANY done story
+  - name: check_on_feature_for_done
+    condition: "on_feature_branch_for_done_story === true"
+    if_true: check_finalized_commit
+    if_false: check_on_main_for_done
+
+  # Decision 4: Check if finalized commit exists
+  - name: check_finalized_commit
+    condition: "git_last_commit_is_finalized === true"
+    if_true:
+      state: STORY_DONE_READY_TO_CHECKOUT_MAIN
+      action_type: action
+      action: "Checkout main branch (git checkout main)"
+    if_false: check_git_clean_for_finalize
+
+  # Decision 5: Check if git clean for finalizing
+  - name: check_git_clean_for_finalize
+    condition: "git_clean === true"
+    if_true:
+      state: STORY_DONE_NO_FINALIZED_COMMIT_CLEAN
+      action_type: error
+      action: "Story {current_branch_story_id} is done but no finalized commit found and branch is clean. This is a workflow violation."
+    if_false:
+      state: STORY_DONE_NO_FINALIZED_COMMIT_DIRTY
+      action_type: action
+      action: "Create finalized commit for story {current_branch_story_id} (git commit -m 'Finalized {current_branch_story_id}')"
+
+  # Decision 6: Check if on main (done story, not on feature branch)
+  - name: check_on_main_for_done
+    condition: "git_branch === 'main'"
+    if_true: check_done_story_feature_branch_exists
+    if_false: check_story_in_review
+
+  # Decision 7: Check if feature branch exists for ANY done story
+  - name: check_done_story_feature_branch_exists
+    condition: "done_story_feature_branch_exists === true"
+    if_true: check_done_story_branch_merged
+    if_false: check_story_in_review
+
+  # Decision 8: Check if done story feature branch is merged
+  - name: check_done_story_branch_merged
+    condition: "done_story_feature_branch_merged === true"
+    if_true:
+      state: STORY_DONE_BRANCH_MERGED
+      action_type: action
+      action: "Delete feature branch {done_story_feature_branch_name} (git branch -d {done_story_feature_branch_name})"
+    if_false:
+      state: STORY_DONE_BRANCH_NOT_MERGED
+      action_type: action
+      action: "Merge feature branch {done_story_feature_branch_name} to main with --no-ff (git merge --no-ff {done_story_feature_branch_name})"
+
+  # Decision 9: Check if story is IN_REVIEW
+  - name: check_story_in_review
+    condition: "stories_in_review.length > 0"
+    if_true: check_on_correct_branch_for_review
+    if_false: check_story_in_progress
+
+  # Decision 10: Check if on correct branch for in_review story
+  - name: check_on_correct_branch_for_review
+    condition: "git_branch.startsWith('feature/') && current_branch_story_id === current_story_id"
+    if_true: check_git_clean_for_review
+    if_false:
+      state: GIT_BRANCH_MISMATCH_REVIEW
+      action_type: error
+      action: "Branch mismatch: on {git_branch} but story {current_story_id} is in_review. Checkout correct branch (feature/{current_story_id}-*)."
+
+  # Decision 10a: Check if git is clean for review
+  - name: check_git_clean_for_review
+    condition: "git_clean === true"
+    if_true:
+      state: STORY_IN_REVIEW
+      action_type: suggest
+      action: "Suggest user run `/workflow-start-review` to generate code review prompts"
+    if_false: check_only_ccdevtools_dirty
+
+  # Decision 10b: Check if only cc-devtools files are dirty
+  - name: check_only_ccdevtools_dirty
+    condition: "(modified_files || []).every(f => f.includes('cc-devtools/')) && (untracked_files || []).every(f => f.includes('cc-devtools/'))"
+    if_true:
+      state: STORY_IN_REVIEW_CCDEVTOOLS_ONLY
+      action_type: suggest
+      action: "Suggest user run `/workflow-start-review` to generate code review prompts (cc-devtools/ changes will be ignored in review)"
+    if_false:
+      state: STORY_IN_REVIEW_WITH_UNCOMMITTED
+      action_type: error
+      action: "Story is in_review but has uncommitted changes beyond cc-devtools/. Commit or stash them before starting review."
+
+  # Decision 11: Check if story is IN_PROGRESS
+  - name: check_story_in_progress
+    condition: "stories_in_progress.length > 0"
+    if_true: check_feature_branch_exists_for_current
+    if_false: check_story_todo
+
+  # Decision 12: Check if feature branch exists for current in_progress story
+  - name: check_feature_branch_exists_for_current
+    condition: "feature_branch_exists_for_current_story === true"
+    if_true: check_on_correct_branch_for_progress
+    if_false:
+      state: STORY_IN_PROGRESS_NO_BRANCH
+      action_type: action
+      action: "Create feature branch for story {current_story_id}"
+
+  # Decision 13: Check if on correct branch for in_progress story
+  - name: check_on_correct_branch_for_progress
+    condition: "git_branch.startsWith('feature/') && current_branch_story_id === current_story_id"
+    if_true: check_story_has_subtasks
+    if_false:
+      state: STORY_IN_PROGRESS_WRONG_BRANCH
+      action_type: action
+      action: "Checkout feature branch for story {current_story_id}"
+
+  # Decision 14: Check if story has subtasks
+  - name: check_story_has_subtasks
+    condition: "current_story_subtasks && current_story_subtasks.length > 0"
+    if_true: check_subtask_in_progress
+    if_false:
+      state: STORY_IN_PROGRESS_NO_SUBTASKS
+      action_type: options
+      options:
+        - option: A
+          description: "Add subtasks to break down the work"
+          action: "Suggest user run `/kanban-add-subtasks`"
+        - option: B
+          description: "Proceed without subtasks (not recommended)"
+          action: "Get story {current_story_id} details and implement; when complete update story to in_review"
+      warning: "Working without subtasks means no commit structure guidance"
+
+  # Decision 15: Check if subtask is in_progress
+  - name: check_subtask_in_progress
+    condition: "subtasks_in_progress > 0"
+    if_true: check_subtask_uncommitted_work
+    if_false: check_uncommitted_after_completion
+
+  # Decision 16: Check if subtask has uncommitted work
+  - name: check_subtask_uncommitted_work
+    condition: "git_clean === false"
+    if_true:
+      state: SUBTASK_IN_PROGRESS_UNCOMMITTED
+      action_type: action
+      action: "Continue implementation of subtask {current_subtask_id}. When complete, mark subtask as done"
+    if_false:
+      state: SUBTASK_IN_PROGRESS_CLEAN
+      action_type: action
+      action: "Validate if subtask {current_subtask_id} implementation is complete. If complete, mark subtask as done. If not complete, continue implementation and then mark as done"
+
+  # Decision 16a: Check for uncommitted work after subtask completion
+  - name: check_uncommitted_after_completion
+    condition: "git_clean === false && subtasks_done > 0"
+    if_true: check_if_only_ccdevtools_dirty_after_subtask
+    if_false: check_subtasks_todo
+
+  # Decision 16b: Check if only cc-devtools dirty after subtask
+  - name: check_if_only_ccdevtools_dirty_after_subtask
+    condition: "(modified_files || []).every(f => f.includes('cc-devtools/')) && (untracked_files || []).every(f => f.includes('cc-devtools/'))"
+    if_true: check_subtasks_todo
+    if_false: check_more_subtasks_available
+
+  # Decision 16c: Determine commit options based on remaining subtasks
+  - name: check_more_subtasks_available
+    condition: "subtasks_todo > 0"
+    if_true:
+      state: UNCOMMITTED_WORK_WITH_MORE_SUBTASKS
+      action_type: action
+      action: "There are uncommitted changes and no subtask is in_progress. If you just completed work on a subtask, commit all related changes without asking. If the current changes are unrelated to the subtask you just completed, present options: A) Create commit for uncommitted changes, B) Update subtask {next_subtask_id} to in_progress"
+    if_false:
+      state: UNCOMMITTED_WORK_ALL_SUBTASKS_DONE
+      action_type: action
+      action: "There are uncommitted changes but all subtasks are complete. Commit all related changes without asking. If unrelated, present options: A) Create commit for uncommitted changes, B) Stash changes and proceed to mark story as in_review"
+
+  # Decision 17: Check if there are subtasks TODO
+  - name: check_subtasks_todo
+    condition: "subtasks_todo > 0"
+    if_true:
+      state: SUBTASKS_TODO_AVAILABLE
+      action_type: options
+      options:
+        - option: A
+          description: "Start subtask {next_subtask_id}: {next_subtask_title}"
+          action: "Update subtask {next_subtask_id} to in_progress"
+        - option: B
+          description: "Stop for now"
+          action: "Tell user to say 'Continue working' to resume"
+    if_false:
+      state: ALL_SUBTASKS_DONE
+      action_type: action
+      action: "All subtasks are done! Update story {current_story_id} status to in_review"
+
+  # Decision 19: Check if story is TODO
+  - name: check_story_todo
+    condition: "stories_todo.length > 0"
+    if_true: check_on_main_for_todo
+    if_false:
+      state: NO_ACTIONABLE_STORIES
+      action_type: suggest
+      action: "No actionable stories found. Suggest user run `/kanban-add-stories`"
+
+  # Decision 20: Check if on main for todo story
+  - name: check_on_main_for_todo
+    condition: "git_branch === 'main'"
+    if_true: check_git_clean_for_todo
+    if_false: check_on_feature_for_todo
+
+  # Decision 21: Check if on feature branch for todo story
+  - name: check_on_feature_for_todo
+    condition: "git_branch.startsWith('feature/') && current_branch_story_id === next_story_id"
+    if_true:
+      state: STORY_TODO_ON_FEATURE_BRANCH
+      action_type: action
+      action: "Update story {next_story_id} status to in_progress"
+    if_false:
+      state: GIT_NOT_ON_MAIN_FOR_TODO
+      action_type: error
+      action: "Cannot start new story: not on main branch. Checkout main first (git checkout main)."
+
+  # Decision 22: Check if git clean on main
+  - name: check_git_clean_for_todo
+    condition: "git_clean === true"
+    if_true: offer_todo_and_blocked_stories
+    if_false:
+      state: GIT_UNCOMMITTED_CHANGES
+      action_type: error
+      action: "Cannot start new story: uncommitted changes exist. Commit or stash them first."
+
+  # Decision 23: Offer TODO and BLOCKED stories
+  - name: offer_todo_and_blocked_stories
+    condition: "true"
+    if_true:
+      state: STORY_TODO_OR_BLOCKED_AVAILABLE
+      action_type: options_dynamic
+      action: "List all TODO stories offering options to start them"
