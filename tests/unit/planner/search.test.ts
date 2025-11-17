@@ -94,6 +94,25 @@ describe('Planner Search', () => {
       expect(filtered.map(p => p.id)).not.toContain('p4');
     });
 
+    it('should include on_hold plans in active filter (issue #1)', () => {
+      const plans: Plan[] = [
+        createPlan({ id: 'p1', status: 'planning' }),
+        createPlan({ id: 'p2', status: 'in_progress' }),
+        createPlan({ id: 'p3', status: 'on_hold' }),
+        createPlan({ id: 'p4', status: 'completed' }),
+        createPlan({ id: 'p5', status: 'abandoned' })
+      ];
+
+      const filtered = filterByStatus(plans, false);
+
+      expect(filtered).toHaveLength(3);
+      expect(filtered.map(p => p.id)).toContain('p1');
+      expect(filtered.map(p => p.id)).toContain('p2');
+      expect(filtered.map(p => p.id)).toContain('p3');
+      expect(filtered.map(p => p.id)).not.toContain('p4');
+      expect(filtered.map(p => p.id)).not.toContain('p5');
+    });
+
     it('should handle empty array', () => {
       const filtered = filterByStatus([], false);
       expect(filtered).toEqual([]);
@@ -307,6 +326,23 @@ describe('Planner Search', () => {
       const results = await hybridSearch('', plans, 10, true);
 
       expect(results).toHaveLength(4);
+    });
+
+    it('should include on_hold plans by default (issue #1)', async () => {
+      const plans: Plan[] = [
+        createPlan({ id: 'p1', status: 'planning', summary: 'Planning plan' }),
+        createPlan({ id: 'p2', status: 'in_progress', summary: 'Active plan' }),
+        createPlan({ id: 'p3', status: 'on_hold', summary: 'Paused plan' }),
+        createPlan({ id: 'p4', status: 'completed', summary: 'Done plan' })
+      ];
+
+      const results = await hybridSearch('plan', plans, 10, false);
+
+      const ids = results.map(r => r.id);
+      expect(ids).toContain('p1');
+      expect(ids).toContain('p2');
+      expect(ids).toContain('p3');
+      expect(ids).not.toContain('p4');
     });
   });
 
